@@ -63,8 +63,13 @@ public enum OfflineDataCache {
      */
     public void set(UUID player, CompoundTag tag) {
         savedPlayers.put(player, tag);
+        
+        OfflineDataChanged.EVENT.invoker().onOfflineDataChanged(player, tag);
     }
 
+    /**
+     * Sets the player data tag in the cache and saves to disk.
+     */
     public void save(UUID player, CompoundTag tag) {
         set(player, tag);
 
