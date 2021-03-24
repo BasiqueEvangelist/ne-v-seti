@@ -8,5 +8,8 @@ public class NeVSeti implements ModInitializer {
     public void onInitialize() {
         ServerLifecycleEvents.SERVER_STARTED.register(OfflineDataCache.INSTANCE::onServerStart);
         ServerLifecycleEvents.SERVER_STOPPED.register(OfflineDataCache.INSTANCE::onServerShutdown);
+
+        ServerLifecycleEvents.SERVER_STARTED.register(OfflineNameCache.INSTANCE::onServerStart);
+        ServerLifecycleEvents.SERVER_STOPPED.register(OfflineNameCache.INSTANCE::onServerShutdown);
     }
 }
