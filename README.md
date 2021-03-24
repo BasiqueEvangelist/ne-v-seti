@@ -11,7 +11,6 @@ repositories {
 }
 
 dependencies {
-    // Actual versions coming soon™
-    modImplementation include('com.github.BasiqueEvangelist:ne-v-seti:master-SNAPSHOT')
+    modImplementation include('com.github.BasiqueEvangelist:ne-v-seti:0.1.0')
 }
 ```
