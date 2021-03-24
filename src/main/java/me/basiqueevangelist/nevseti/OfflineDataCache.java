@@ -61,11 +61,11 @@ public enum OfflineDataCache {
     /**
      * Sets the player data tag in the cache without saving to disk.
      */
-    public synchronized void set(UUID player, CompoundTag tag) {
+    public void set(UUID player, CompoundTag tag) {
         savedPlayers.put(player, tag);
     }
 
-    public synchronized void save(UUID player, CompoundTag tag) {
+    public void save(UUID player, CompoundTag tag) {
         set(player, tag);
 
         try {
