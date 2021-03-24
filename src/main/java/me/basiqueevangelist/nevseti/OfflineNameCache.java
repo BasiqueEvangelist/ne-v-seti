@@ -3,6 +3,8 @@ package me.basiqueevangelist.nevseti;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.authlib.GameProfile;
+import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.UUID;
@@ -21,9 +23,18 @@ public enum OfflineNameCache {
         currentServer = null;
     }
 
+    public void setInternal(UUID playerUuid, String name) {
+        names.put(playerUuid, name);
+    }
+
     public String getNameFromUUID(UUID playerUuid) {
         if (names.containsKey(playerUuid))
             return names.get(playerUuid);
+
+        CompoundTag offlineData = OfflineDataCache.INSTANCE.get(playerUuid);
+        if (offlineData != null && offlineData.contains("SavedUsername", NbtType.STRING)) {
+            names.put(playerUuid, offlineData.getString("SavedUsername"));
+        }
 
         GameProfile loadedProfile = currentServer.getUserCache().getByUuid(playerUuid);
         if (loadedProfile != null) {

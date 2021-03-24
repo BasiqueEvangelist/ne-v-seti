@@ -4,6 +4,7 @@
   "package": "me.basiqueevangelist.nevseti.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ServerPlayerEntityMixin"
   ],
   "client": [
     "WorldSaveHandlerMixin"
