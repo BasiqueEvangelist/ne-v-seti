@@ -2,6 +2,7 @@ package me.basiqueevangelist.nevseti;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import me.basiqueevangelist.nevseti.nbt.CompoundTagView;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -40,6 +41,13 @@ public enum OfflineNameCache {
 
     public void setInternal(UUID playerUuid, String name) {
         names.put(playerUuid, name);
+    }
+
+    /**
+     *  Gets an unmodifiable version of the UUID &lt;-&gt; username BiMap.
+     */
+    public BiMap<UUID, String> getNames() {
+        return Maps.unmodifiableBiMap(names);
     }
 
     public String getNameFromUUID(UUID playerUuid) {
