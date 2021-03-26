@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 
+import java.util.Map;
 import java.util.UUID;
 
 public enum OfflineNameCache {
@@ -15,8 +16,22 @@ public enum OfflineNameCache {
     private final BiMap<UUID, String> names = HashBiMap.create();
     private MinecraftServer currentServer;
 
+    OfflineNameCache() {
+        OfflineDataChanged.EVENT.register((playerUuid, newTag) -> {
+            if (newTag.contains("SavedUsername", NbtType.STRING)) {
+                names.put(playerUuid, newTag.getString("SavedUsername"));
+            }
+        });
+    }
+
     void onServerStart(MinecraftServer server) {
         currentServer = server;
+
+        for (Map.Entry<UUID, CompoundTag> playerData : OfflineDataCache.INSTANCE.getPlayers().entrySet()) {
+            if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
+                names.put(playerData.getKey(), playerData.getValue().getString());
+            }
+        }
     }
 
     void onServerShutdown(MinecraftServer server) {
