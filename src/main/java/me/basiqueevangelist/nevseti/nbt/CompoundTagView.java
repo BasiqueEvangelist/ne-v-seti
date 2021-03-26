@@ -1,7 +1,6 @@
 package me.basiqueevangelist.nevseti.nbt;
 
-import net.minecraft.nbt.*;
-import net.minecraft.util.crash.CrashException;
+import net.minecraft.nbt.CompoundTag;
 
 public interface CompoundTagView {
     static CompoundTagView take(CompoundTag tag) {
