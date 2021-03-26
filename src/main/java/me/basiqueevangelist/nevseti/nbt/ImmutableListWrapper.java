@@ -31,41 +31,41 @@ class ImmutableListWrapper implements ListTagView {
 
     @Override
     public short getShort(int index) {
-        return 0;
+        return tag.getShort(index);
     }
 
     @Override
     public int getInt(int i) {
-        return 0;
+        return tag.getInt(i);
     }
 
     @Override
     public int[] getIntArray(int index) {
-        return new int[0];
+        return tag.getIntArray(index);
     }
 
     @Override
     public double getDouble(int index) {
-        return 0;
+        return tag.getDouble(index);
     }
 
     @Override
     public float getFloat(int index) {
-        return 0;
+        return tag.getFloat(index);
     }
 
     @Override
     public String getString(int index) {
-        return null;
+        return tag.getString(index);
     }
 
     @Override
     public int size() {
-        return 0;
+        return tag.size();
     }
 
     @Override
     public ListTag copy() {
-        return null;
+        return tag.copy();
     }
 }
