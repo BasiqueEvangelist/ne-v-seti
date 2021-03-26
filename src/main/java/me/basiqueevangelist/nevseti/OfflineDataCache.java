@@ -1,5 +1,6 @@
 package me.basiqueevangelist.nevseti;
 
+import me.basiqueevangelist.nevseti.nbt.CompoundTagView;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.datafixer.Schemas;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +26,7 @@ public enum OfflineDataCache {
     INSTANCE;
 
     private final static Logger LOGGER = LogManager.getLogger("NeVSeti");
-    private final Map<UUID, CompoundTag> savedPlayers = new HashMap<>();
+    private final Map<UUID, CompoundTagView> savedPlayers = new HashMap<>();
     private MinecraftServer currentServer;
 
     void onServerStart(MinecraftServer server) {
@@ -43,7 +44,7 @@ public enum OfflineDataCache {
                     String uuidStr = filename.substring(0, filename.lastIndexOf('.'));
                     UUID uuid = UUID.fromString(uuidStr);
                     int dataVersion = tag.contains("DataVersion", 3) ? tag.getInt("DataVersion") : -1;
-                    savedPlayers.put(uuid, NbtHelper.update(Schemas.getFixer(), DataFixTypes.PLAYER, tag, dataVersion));
+                    savedPlayers.put(uuid, CompoundTagView.take(NbtHelper.update(Schemas.getFixer(), DataFixTypes.PLAYER, tag, dataVersion)));
                 } catch (CrashException | IOException | IllegalArgumentException e) {
                     LOGGER.error("Error while reading playerdata file {}: {}", savedPlayerFile, e);
                 }
@@ -62,9 +63,9 @@ public enum OfflineDataCache {
      * Sets the player data tag in the cache without saving to disk.
      */
     public void set(UUID player, CompoundTag tag) {
-        savedPlayers.put(player, tag);
+        CompoundTagView view = savedPlayers.put(player, CompoundTagView.take(tag));
         
-        OfflineDataChanged.EVENT.invoker().onOfflineDataChanged(player, tag);
+        OfflineDataChanged.EVENT.invoker().onOfflineDataChanged(player, view);
     }
 
     /**
@@ -85,19 +86,19 @@ public enum OfflineDataCache {
         }
     }
 
-    public Map<UUID, CompoundTag> getPlayers() {
+    public Map<UUID, CompoundTagView> getPlayers() {
         return savedPlayers;
     }
 
-    public CompoundTag get(UUID player) {
+    public CompoundTagView get(UUID player) {
         return savedPlayers.get(player);
     }
 
-    public CompoundTag reload(UUID player) {
+    public CompoundTagView reload(UUID player) {
         try {
             Path savedPlayersPath = currentServer.getSavePath(WorldSavePath.PLAYERDATA);
             Path savedDataPath = savedPlayersPath.resolve(player.toString() + ".dat");
-            CompoundTag tag = NbtIo.readCompressed(savedDataPath.toFile());
+            CompoundTagView tag = CompoundTagView.take(NbtIo.readCompressed(savedDataPath.toFile()));
             savedPlayers.put(player, tag);
             return tag;
         } catch (IOException e) {

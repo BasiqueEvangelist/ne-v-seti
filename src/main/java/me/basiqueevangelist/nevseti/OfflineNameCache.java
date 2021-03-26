@@ -3,8 +3,8 @@ package me.basiqueevangelist.nevseti;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.authlib.GameProfile;
+import me.basiqueevangelist.nevseti.nbt.CompoundTagView;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.Map;
@@ -27,9 +27,9 @@ public enum OfflineNameCache {
     void onServerStart(MinecraftServer server) {
         currentServer = server;
 
-        for (Map.Entry<UUID, CompoundTag> playerData : OfflineDataCache.INSTANCE.getPlayers().entrySet()) {
+        for (Map.Entry<UUID, CompoundTagView> playerData : OfflineDataCache.INSTANCE.getPlayers().entrySet()) {
             if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
-                names.put(playerData.getKey(), playerData.getValue().getString());
+                names.put(playerData.getKey(), playerData.getValue().getString("SavedUsername"));
             }
         }
     }
@@ -46,7 +46,7 @@ public enum OfflineNameCache {
         if (names.containsKey(playerUuid))
             return names.get(playerUuid);
 
-        CompoundTag offlineData = OfflineDataCache.INSTANCE.get(playerUuid);
+        CompoundTagView offlineData = OfflineDataCache.INSTANCE.get(playerUuid);
         if (offlineData != null && offlineData.contains("SavedUsername", NbtType.STRING)) {
             names.put(playerUuid, offlineData.getString("SavedUsername"));
         }
