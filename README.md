@@ -11,6 +11,6 @@ repositories {
 }
 
 dependencies {
-    modImplementation include('com.github.BasiqueEvangelist:ne-v-seti:0.1.1')
+    modImplementation include('com.github.BasiqueEvangelist:ne-v-seti:0.1.3')
 }
 ```
