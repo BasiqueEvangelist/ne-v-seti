@@ -4,6 +4,9 @@
   "package": "me.basiqueevangelist.nevseti.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AdvancementProgressAccessor",
+    "CriterionProgressAccessor",
+    "PlayerAdvancementTrackerMixin",
     "ServerPlayerEntityMixin",
     "WorldSaveHandlerMixin"
   ],

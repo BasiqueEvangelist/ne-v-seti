@@ -11,5 +11,8 @@ public class NeVSeti implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(OfflineNameCache.INSTANCE::onServerStart);
         ServerLifecycleEvents.SERVER_STOPPED.register(OfflineNameCache.INSTANCE::onServerShutdown);
+
+        ServerLifecycleEvents.SERVER_STARTED.register(OfflineAdvancementCache.INSTANCE::onServerStart);
+        ServerLifecycleEvents.SERVER_STOPPED.register(OfflineAdvancementCache.INSTANCE::onServerShutdown);
     }
 }
