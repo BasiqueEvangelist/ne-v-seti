@@ -27,7 +27,10 @@
   ],
   "custom": {
     "modmenu": {
-      "badges": ["library"]
+      "badges": ["library"],
+      "links": {
+        "modmenu.discord": "https://discord.gg/bRTMbKdmZt"
+      }
     }
   },
   "depends": {
