@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "ne-v-seti-testmod",
+  "version": "${version}",
+
+  "name": "Ne v seti (Testmod)",
+  "authors": [
+    "BasiqueEvangelist"
+  ],
+  "contact": {
+    "sources": "https://github.com/BasiqueEvangelist/ne-v-seti",
+    "issues": "https://github.com/BasiqueEvangelist/ne-v-seti/issues"
+  },
+
+  "license": "MIT",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.basiqueevangelist.nevseti.testmod.NeVSetiTest"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x",
+    "ne-v-seti": "*"
+  }
+}
