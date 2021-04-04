@@ -68,4 +68,11 @@ class ImmutableListWrapper implements ListTagView {
     public ListTag copy() {
         return tag.copy();
     }
+
+    @Override
+    public String toString() {
+        return "ImmutableListWrapper{" +
+            "tag=" + tag +
+            '}';
+    }
 }

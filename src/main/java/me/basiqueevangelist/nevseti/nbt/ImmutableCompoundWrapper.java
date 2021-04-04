@@ -93,4 +93,11 @@ public class ImmutableCompoundWrapper implements CompoundTagView {
     public CompoundTag copy() {
         return tag.copy();
     }
+
+    @Override
+    public String toString() {
+        return "ImmutableCompoundWrapper{" +
+            "tag=" + tag +
+            '}';
+    }
 }
