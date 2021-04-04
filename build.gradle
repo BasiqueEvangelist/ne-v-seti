@@ -58,7 +58,9 @@ dependencies {
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
 
-	testmodImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+//	testmodModImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+//		transitive = false
+//	}
 	testmodImplementation sourceSets.main.output
 }
 
