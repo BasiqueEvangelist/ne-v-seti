@@ -12,6 +12,7 @@
     "sources": "https://github.com/BasiqueEvangelist/ne-v-seti",
     "issues": "https://github.com/BasiqueEvangelist/ne-v-seti/issues"
   },
+  "icon": "assets/ne-v-seti/icon.png",
 
   "license": "MIT",
 
