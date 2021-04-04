@@ -61,12 +61,7 @@ public class NeVSetiTest implements ModInitializer {
                             .executes(context -> {
                                 MinecraftServer server = context.getSource().getMinecraftServer();
                                 GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
-                                Map<Identifier, AdvancementProgress> map = OfflineAdvancementUtils.copyAdvancementMap(OfflineAdvancementCache.INSTANCE.get(profile.getId()));
-                                AdvancementProgress progress = OfflineAdvancementUtils.getProgress(map, server.getAdvancementLoader().get(new Identifier("story/iron_tools")));
-                                for (String criterion : progress.getUnobtainedCriteria()) {
-                                    progress.obtain(criterion);
-                                }
-                                OfflineAdvancementCache.INSTANCE.save(profile.getId(), map);
+                                OfflineAdvancementUtils.grant(profile.getId(), server.getAdvancementLoader().get(new Identifier("story/iron_tools")));
                                 return 0;
                             }))));
         });

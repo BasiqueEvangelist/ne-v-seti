@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public final class OfflineAdvancementUtils {
     private OfflineAdvancementUtils() {
@@ -30,5 +31,23 @@ public final class OfflineAdvancementUtils {
             progress.init(advancement.getCriteria(), advancement.getRequirements());
             return progress;
         });
+    }
+    
+    public static void grant(UUID uuid, Advancement advancement) {
+        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementCache.INSTANCE.get(uuid));
+        AdvancementProgress progress = getProgress(map, advancement);
+        for (String criterion : progress.getUnobtainedCriteria()) {
+            progress.obtain(criterion);
+        }
+        OfflineAdvancementCache.INSTANCE.save(uuid, map);
+    }
+    
+    public static void revoke(UUID uuid, Advancement advancement) {
+        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementCache.INSTANCE.get(uuid));
+        AdvancementProgress progress = getProgress(map, advancement);
+        for (String criterion : progress.getObtainedCriteria()) {
+            progress.reset(criterion);
+        }
+        OfflineAdvancementCache.INSTANCE.save(uuid, map);
     }
 }
