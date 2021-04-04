@@ -46,37 +46,40 @@ public enum OfflineAdvancementCache {
 
         try {
             Path advancementsPath = server.getSavePath(WorldSavePath.ADVANCEMENTS);
-            for (Path advancementFile : Files.list(advancementsPath).collect(Collectors.toList())) {
-                if (Files.isDirectory(advancementFile) || !advancementFile.toString().endsWith(".json")) {
-                    continue;
-                }
 
-                try {
-                    String filename = advancementFile.getFileName().toString();
-                    String uuidStr = filename.substring(0, filename.lastIndexOf('.'));
-                    UUID uuid = UUID.fromString(uuidStr);
-                    Dynamic<JsonElement> dynamic;
-                    try (InputStream s = Files.newInputStream(advancementFile);
-                         InputStreamReader streamReader = new InputStreamReader(s);
-                         JsonReader reader = new JsonReader(streamReader)) {
-                        reader.setLenient(false);
-                        dynamic = new Dynamic<>(JsonOps.INSTANCE, Streams.parse(reader));
-                    }
-                    if (!dynamic.get("DataVersion").asNumber().result().isPresent()) {
-                        dynamic = dynamic.set("DataVersion", dynamic.createInt(1343));
+            if (Files.exists(advancementsPath)) {
+                for (Path advancementFile : Files.list(advancementsPath).collect(Collectors.toList())) {
+                    if (Files.isDirectory(advancementFile) || !advancementFile.toString().endsWith(".json")) {
+                        continue;
                     }
 
-                    dynamic = Schemas.getFixer().update(DataFixTypes.ADVANCEMENTS.getTypeReference(), dynamic, dynamic.get("DataVersion").asInt(0), SharedConstants.getGameVersion().getWorldVersion());
-                    dynamic = dynamic.remove("DataVersion");
+                    try {
+                        String filename = advancementFile.getFileName().toString();
+                        String uuidStr = filename.substring(0, filename.lastIndexOf('.'));
+                        UUID uuid = UUID.fromString(uuidStr);
+                        Dynamic<JsonElement> dynamic;
+                        try (InputStream s = Files.newInputStream(advancementFile);
+                             InputStreamReader streamReader = new InputStreamReader(s);
+                             JsonReader reader = new JsonReader(streamReader)) {
+                            reader.setLenient(false);
+                            dynamic = new Dynamic<>(JsonOps.INSTANCE, Streams.parse(reader));
+                        }
+                        if (!dynamic.get("DataVersion").asNumber().result().isPresent()) {
+                            dynamic = dynamic.set("DataVersion", dynamic.createInt(1343));
+                        }
 
-                    Map<Identifier, AdvancementProgress> parsedMap = GSON.getAdapter(JSON_TYPE).fromJsonTree(dynamic.getValue());
-                    ImmutableMap.Builder<Identifier, AdvancementProgressView> finalMap = ImmutableMap.builder();
-                    for (Map.Entry<Identifier, AdvancementProgress> entry : parsedMap.entrySet()) {
-                        finalMap.put(entry.getKey(), AdvancementProgressView.take(entry.getValue()));
+                        dynamic = Schemas.getFixer().update(DataFixTypes.ADVANCEMENTS.getTypeReference(), dynamic, dynamic.get("DataVersion").asInt(0), SharedConstants.getGameVersion().getWorldVersion());
+                        dynamic = dynamic.remove("DataVersion");
+
+                        Map<Identifier, AdvancementProgress> parsedMap = GSON.getAdapter(JSON_TYPE).fromJsonTree(dynamic.getValue());
+                        ImmutableMap.Builder<Identifier, AdvancementProgressView> finalMap = ImmutableMap.builder();
+                        for (Map.Entry<Identifier, AdvancementProgress> entry : parsedMap.entrySet()) {
+                            finalMap.put(entry.getKey(), AdvancementProgressView.take(entry.getValue()));
+                        }
+                        advancements.put(uuid, finalMap.build());
+                    } catch (CrashException | IOException | IllegalArgumentException | JsonSyntaxException e) {
+                        LOGGER.error("Error while reading advancement file {}: {}", advancementFile, e);
                     }
-                    advancements.put(uuid, finalMap.build());
-                } catch (CrashException | IOException | IllegalArgumentException | JsonSyntaxException e) {
-                    LOGGER.error("Error while reading advancement file {}: {}", advancementFile, e);
                 }
             }
         } catch (IOException e) {
