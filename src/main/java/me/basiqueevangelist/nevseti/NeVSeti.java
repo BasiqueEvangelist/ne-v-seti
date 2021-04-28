@@ -6,13 +6,18 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 public class NeVSeti implements ModInitializer {
     @Override
     public void onInitialize() {
-        ServerLifecycleEvents.SERVER_STARTED.register(OfflineDataCache.INSTANCE::onServerStart);
-        ServerLifecycleEvents.SERVER_STOPPED.register(OfflineDataCache.INSTANCE::onServerShutdown);
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            OfflineDataCache.INSTANCE.onServerStart(server);
+            OfflineNameCache.INSTANCE.onServerStart(server);
+            OfflineAdvancementCache.INSTANCE.onServerStart(server);
 
-        ServerLifecycleEvents.SERVER_STARTED.register(OfflineNameCache.INSTANCE::onServerStart);
-        ServerLifecycleEvents.SERVER_STOPPED.register(OfflineNameCache.INSTANCE::onServerShutdown);
+            OfflineDataLoaded.EVENT.invoker().onOfflineDataLoaded();
+        });
 
-        ServerLifecycleEvents.SERVER_STARTED.register(OfflineAdvancementCache.INSTANCE::onServerStart);
-        ServerLifecycleEvents.SERVER_STOPPED.register(OfflineAdvancementCache.INSTANCE::onServerShutdown);
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            OfflineDataCache.INSTANCE.onServerShutdown(server);
+            OfflineNameCache.INSTANCE.onServerShutdown(server);
+            OfflineAdvancementCache.INSTANCE.onServerShutdown(server);
+        });
     }
 }

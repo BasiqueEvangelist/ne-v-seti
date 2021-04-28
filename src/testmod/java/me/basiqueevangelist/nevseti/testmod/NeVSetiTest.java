@@ -1,15 +1,11 @@
 package me.basiqueevangelist.nevseti.testmod;
 
 import com.mojang.authlib.GameProfile;
-import me.basiqueevangelist.nevseti.OfflineAdvancementCache;
-import me.basiqueevangelist.nevseti.OfflineAdvancementUtils;
-import me.basiqueevangelist.nevseti.OfflineDataCache;
-import me.basiqueevangelist.nevseti.OfflineNameCache;
+import me.basiqueevangelist.nevseti.*;
 import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
 import me.basiqueevangelist.nevseti.nbt.CompoundTagView;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.LiteralText;
@@ -23,6 +19,8 @@ import static net.minecraft.server.command.CommandManager.literal;
 public class NeVSetiTest implements ModInitializer {
     @Override
     public void onInitialize() {
+        OfflineDataLoaded.EVENT.register(() -> System.out.println("Offline data loaded!"));
+
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             dispatcher.register(
                 literal("shownbt")
