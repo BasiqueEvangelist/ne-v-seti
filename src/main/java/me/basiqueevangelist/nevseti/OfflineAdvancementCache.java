@@ -12,7 +12,9 @@ import com.google.gson.stream.JsonReader;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
+import me.basiqueevangelist.nevseti.mixin.AdvancementProgressAccessor;
 import net.minecraft.SharedConstants;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.datafixer.Schemas;
@@ -74,6 +76,7 @@ public enum OfflineAdvancementCache {
                         Map<Identifier, AdvancementProgress> parsedMap = GSON.getAdapter(JSON_TYPE).fromJsonTree(dynamic.getValue());
                         ImmutableMap.Builder<Identifier, AdvancementProgressView> finalMap = ImmutableMap.builder();
                         for (Map.Entry<Identifier, AdvancementProgress> entry : parsedMap.entrySet()) {
+                            tryInitAdvancementProgress(entry.getKey(), entry.getValue());
                             finalMap.put(entry.getKey(), AdvancementProgressView.take(entry.getValue()));
                         }
                         advancements.put(uuid, finalMap.build());
@@ -91,12 +94,23 @@ public enum OfflineAdvancementCache {
         currentServer = null;
     }
 
+    private void tryInitAdvancementProgress(Identifier advId, AdvancementProgress progress) {
+        if (((AdvancementProgressAccessor) progress).getRequirements().length == 0) {
+            Advancement adv = currentServer.getAdvancementLoader().get(advId);
+
+            if (adv != null) {
+                ((AdvancementProgressAccessor) progress).setRequirements(adv.getRequirements());
+            }
+        }
+    }
+
     /**
      * Sets the advancement data in the cache without saving to disk.
      */
     public Map<Identifier, AdvancementProgressView> set(UUID playerUuid, Map<Identifier, AdvancementProgress> map) {
         ImmutableMap.Builder<Identifier, AdvancementProgressView> finalMapBuilder = ImmutableMap.builder();
         for (Map.Entry<Identifier, AdvancementProgress> entry : map.entrySet()) {
+            tryInitAdvancementProgress(entry.getKey(), entry.getValue());
             finalMapBuilder.put(entry.getKey(), AdvancementProgressView.take(entry.getValue()));
         }
         Map<Identifier, AdvancementProgressView> finalMap = advancements.put(playerUuid, finalMapBuilder.build());

@@ -15,7 +15,15 @@ class ImmutableAdvancementProgressWrapper implements AdvancementProgressView {
     }
 
     @Override
+    public boolean isLoaded() {
+        return ((AdvancementProgressAccessor) progress).getRequirements().length > 0;
+    }
+
+    @Override
     public boolean isDone() {
+        if (!isLoaded())
+            throw new IllegalStateException("Advancement isn't loaded");
+
         return progress.isDone();
     }
 
