@@ -1,9 +1,9 @@
 package me.basiqueevangelist.nevseti.nbt;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
-public interface CompoundTagView {
-    static CompoundTagView take(CompoundTag tag) {
+public interface NbtCompoundView {
+    static NbtCompoundView take(NbtCompound tag) {
         return new ImmutableCompoundWrapper(tag);
     }
 
@@ -33,11 +33,11 @@ public interface CompoundTagView {
 
     long[] getLongArray(String key);
 
-    CompoundTagView getCompound(String key);
+    NbtCompoundView getCompound(String key);
 
-    ListTagView getList(String key, int type);
+    NbtListView getList(String key, int type);
 
     boolean getBoolean(String key);
 
-    CompoundTag copy();
+    NbtCompound copy();
 }

@@ -1,11 +1,11 @@
 package me.basiqueevangelist.nevseti.nbt;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
-public class ImmutableCompoundWrapper implements CompoundTagView {
-    private final CompoundTag tag;
+public class ImmutableCompoundWrapper implements NbtCompoundView {
+    private final NbtCompound tag;
 
-    public ImmutableCompoundWrapper(CompoundTag tag) {
+    public ImmutableCompoundWrapper(NbtCompound tag) {
         this.tag = tag;
     }
 
@@ -75,13 +75,13 @@ public class ImmutableCompoundWrapper implements CompoundTagView {
     }
 
     @Override
-    public CompoundTagView getCompound(String key) {
-        return CompoundTagView.take(tag.getCompound(key));
+    public NbtCompoundView getCompound(String key) {
+        return NbtCompoundView.take(tag.getCompound(key));
     }
 
     @Override
-    public ListTagView getList(String key, int type) {
-        return ListTagView.take(tag.getList(key, type));
+    public NbtListView getList(String key, int type) {
+        return NbtListView.take(tag.getList(key, type));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ImmutableCompoundWrapper implements CompoundTagView {
     }
 
     @Override
-    public CompoundTag copy() {
+    public NbtCompound copy() {
         return tag.copy();
     }
 

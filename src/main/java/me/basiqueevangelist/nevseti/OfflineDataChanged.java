@@ -1,6 +1,6 @@
 package me.basiqueevangelist.nevseti;
 
-import me.basiqueevangelist.nevseti.nbt.CompoundTagView;
+import me.basiqueevangelist.nevseti.nbt.NbtCompoundView;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
@@ -13,5 +13,5 @@ public interface OfflineDataChanged {
         }
     });
 
-    void onOfflineDataChanged(UUID playerUuid, CompoundTagView newTag);
+    void onOfflineDataChanged(UUID playerUuid, NbtCompoundView newTag);
 }

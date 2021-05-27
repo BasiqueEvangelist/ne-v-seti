@@ -1,17 +1,17 @@
 package me.basiqueevangelist.nevseti.nbt;
 
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtList;
 
-class ImmutableListWrapper implements ListTagView {
-    private final ListTag tag;
+class ImmutableListWrapper implements NbtListView {
+    private final NbtList tag;
 
-    public ImmutableListWrapper(ListTag tag) {
+    public ImmutableListWrapper(NbtList tag) {
         this.tag = tag;
     }
 
     @Override
-    public byte getElementType() {
-        return tag.getElementType();
+    public byte getHeldType() {
+        return tag.getHeldType();
     }
 
     @Override
@@ -20,13 +20,13 @@ class ImmutableListWrapper implements ListTagView {
     }
 
     @Override
-    public CompoundTagView getCompound(int index) {
-        return CompoundTagView.take(tag.getCompound(index));
+    public NbtCompoundView getCompound(int index) {
+        return NbtCompoundView.take(tag.getCompound(index));
     }
 
     @Override
-    public ListTagView getList(int index) {
-        return ListTagView.take(tag.getList(index));
+    public NbtListView getList(int index) {
+        return NbtListView.take(tag.getList(index));
     }
 
     @Override
@@ -65,7 +65,7 @@ class ImmutableListWrapper implements ListTagView {
     }
 
     @Override
-    public ListTag copy() {
+    public NbtList copy() {
         return tag.copy();
     }
 

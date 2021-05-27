@@ -1,19 +1,19 @@
 package me.basiqueevangelist.nevseti.nbt;
 
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtList;
 
-public interface ListTagView {
-    static ListTagView take(ListTag tag) {
+public interface NbtListView {
+    static NbtListView take(NbtList tag) {
         return new ImmutableListWrapper(tag);
     }
 
-    byte getElementType();
+    byte getHeldType();
 
     boolean isEmpty();
 
-    CompoundTagView getCompound(int index);
+    NbtCompoundView getCompound(int index);
 
-    ListTagView getList(int index);
+    NbtListView getList(int index);
 
     short getShort(int index);
 
@@ -29,5 +29,5 @@ public interface ListTagView {
 
     int size();
 
-    ListTag copy();
+    NbtList copy();
 }
