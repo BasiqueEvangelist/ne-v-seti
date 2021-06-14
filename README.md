@@ -7,10 +7,14 @@ Ne v seti is a library that facilitates reading and editing data of offline play
 ## Installing
 ```groovy
 repositories {
-    maven { url 'https://jitpack.io' }
+	maven {
+		name = "Basique's Maven"
+		url = 'https://porez.ml/maven'
+	}
 }
 
 dependencies {
-    modImplementation include('com.github.BasiqueEvangelist:ne-v-seti:0.1.5')
+    modImplementation include('me.basiqueevangelist:ne-v-seti:0.1.5-1.16.5')
+    // modImplementation include('me.basiqueevangelist:ne-v-seti:0.1.5-1.17')
 }
 ```
