@@ -23,7 +23,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onConstructed(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo cb) {
-        if (profile.isComplete())
+        if (profile.isComplete() && (Class<?>)getClass() == ServerPlayerEntity.class)
             OfflineNameCache.INSTANCE.setInternal(profile.getId(), profile.getName());
     }
 
