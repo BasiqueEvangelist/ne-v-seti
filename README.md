@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation include('me.basiqueevangelist:ne-v-seti:0.1.5-1.16.5')
-    // modImplementation include('me.basiqueevangelist:ne-v-seti:0.1.5-1.17')
+    modImplementation include('me.basiqueevangelist:ne-v-seti:0.1.6-1.16.5')
+    // modImplementation include('me.basiqueevangelist:ne-v-seti:0.1.6-1.17')
 }
 ```
