@@ -40,6 +40,8 @@ public enum OfflineNameCache {
     }
 
     public void setInternal(UUID playerUuid, String name) {
+        if (names.containsValue(name))
+            names.inverse().remove(name);
         names.put(playerUuid, name);
     }
 
