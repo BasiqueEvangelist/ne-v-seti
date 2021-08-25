@@ -58,7 +58,7 @@ public class NeVSetiTest implements ModInitializer {
                     .then(literal("write")
                         .then(argument("player", GameProfileArgumentType.gameProfile())
                             .executes(context -> {
-                                MinecraftServer server = context.getSource().getMinecraftServer();
+                                MinecraftServer server = context.getSource().getServer();
                                 GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
                                 OfflineAdvancementUtils.grant(profile.getId(), server.getAdvancementLoader().get(new Identifier("story/iron_tools")));
                                 return 0;

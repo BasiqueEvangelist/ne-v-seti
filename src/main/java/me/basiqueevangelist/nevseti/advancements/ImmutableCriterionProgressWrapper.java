@@ -29,7 +29,7 @@ class ImmutableCriterionProgressWrapper implements CriterionProgressView {
 
     static CriterionProgress makeCopyOf(CriterionProgress progress) {
         CriterionProgress newProgress = new CriterionProgress();
-        ((CriterionProgressAccessor) newProgress).setObtained(progress.getObtainedDate());
+        ((CriterionProgressAccessor) newProgress).setObtainedDate(progress.getObtainedDate());
         return newProgress;
     }
 

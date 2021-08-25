@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public enum OfflineNameCache {
@@ -61,10 +62,10 @@ public enum OfflineNameCache {
             names.put(playerUuid, offlineData.getString("SavedUsername"));
         }
 
-        GameProfile loadedProfile = currentServer.getUserCache().getByUuid(playerUuid);
-        if (loadedProfile != null) {
-            names.put(playerUuid, loadedProfile.getName());
-            return loadedProfile.getName();
+        Optional<GameProfile> loadedProfile = currentServer.getUserCache().getByUuid(playerUuid);
+        if (loadedProfile.isPresent()) {
+            names.put(playerUuid, loadedProfile.get().getName());
+            return loadedProfile.get().getName();
         }
 
         GameProfile profile = new GameProfile(playerUuid, null);
@@ -82,10 +83,10 @@ public enum OfflineNameCache {
             return names.inverse().get(name);
         }
 
-        GameProfile loadedProfile = currentServer.getUserCache().findByName(name);
-        if (loadedProfile != null) {
-            names.put(loadedProfile.getId(), name);
-            return loadedProfile.getId();
+        Optional<GameProfile> loadedProfile = currentServer.getUserCache().findByName(name);
+        if (loadedProfile.isPresent()) {
+            names.put(loadedProfile.get().getId(), name);
+            return loadedProfile.get().getId();
         }
 
         return null;

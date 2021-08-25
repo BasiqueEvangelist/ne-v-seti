@@ -9,5 +9,5 @@ import java.util.Date;
 @Mixin(CriterionProgress.class)
 public interface CriterionProgressAccessor {
     @Accessor
-    void setObtained(Date date);
+    void setObtainedDate(Date date);
 }
