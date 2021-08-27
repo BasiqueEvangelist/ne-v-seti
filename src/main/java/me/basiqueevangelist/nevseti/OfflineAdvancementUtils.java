@@ -1,15 +1,27 @@
 package me.basiqueevangelist.nevseti;
 
+import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.util.Identifier;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public final class OfflineAdvancementUtils {
     private OfflineAdvancementUtils() {
 
+    }
+
+    @SuppressWarnings("removal")
+    @Deprecated(forRemoval = true)
+    public static Map<Identifier, AdvancementProgress> copyAdvancementMap(Map<Identifier, AdvancementProgressView> from) {
+        Map<Identifier, AdvancementProgress> newMap = new HashMap<>();
+        for (Map.Entry<Identifier, AdvancementProgressView> entry : from.entrySet()) {
+            newMap.put(entry.getKey(), entry.getValue().copy());
+        }
+        return newMap;
     }
 
     public static AdvancementProgress getOrAddProgress(Map<Identifier, AdvancementProgress> map, Advancement advancement) {
