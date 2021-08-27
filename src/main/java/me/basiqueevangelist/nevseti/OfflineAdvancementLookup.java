@@ -16,7 +16,6 @@ import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.datafixer.Schemas;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
 import org.apache.logging.log4j.LogManager;
@@ -25,9 +24,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public final class OfflineAdvancementLookup {
     private OfflineAdvancementLookup() {
@@ -106,5 +103,38 @@ public final class OfflineAdvancementLookup {
             LOGGER.error("Couldn't get advancements for offline player {}", player, e);
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<UUID> listSavedPlayers() {
+        Path advancementsPath = NeVSeti.currentServer.getSavePath(WorldSavePath.ADVANCEMENTS);
+
+        if (!Files.exists(advancementsPath))
+            return Collections.emptyList();
+
+        List<UUID> list = new ArrayList<>();
+
+        try {
+            Iterator<Path> iter = Files.list(advancementsPath).iterator();
+            while(iter.hasNext()) {
+                Path savedPlayerFile = iter.next();
+
+                if (Files.isDirectory(savedPlayerFile) || !savedPlayerFile.toString().endsWith(".json")) {
+                    continue;
+                }
+
+                try {
+                    String filename = savedPlayerFile.getFileName().toString();
+                    String uuidStr = filename.substring(0, filename.lastIndexOf('.'));
+                    UUID uuid = UUID.fromString(uuidStr);
+                    list.add(uuid);
+                } catch (IllegalArgumentException iae) {
+                    LOGGER.error("Encountered invalid UUID in advancements directory! ", iae);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
     }
 }

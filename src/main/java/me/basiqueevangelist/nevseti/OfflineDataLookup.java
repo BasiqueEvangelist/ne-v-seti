@@ -9,7 +9,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 public final class OfflineDataLookup {
@@ -43,5 +47,34 @@ public final class OfflineDataLookup {
             LOGGER.error("Couldn't get player data for offline player {}", player, e);
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<UUID> listSavedPlayers() {
+        List<UUID> list = new ArrayList<>();
+
+        try {
+            Path savedPlayersPath = NeVSeti.currentServer.getSavePath(WorldSavePath.PLAYERDATA);
+            Iterator<Path> iter = Files.list(savedPlayersPath).iterator();
+            while(iter.hasNext()) {
+                Path savedPlayerFile = iter.next();
+
+                if (Files.isDirectory(savedPlayerFile) || !savedPlayerFile.toString().endsWith(".dat")) {
+                    continue;
+                }
+
+                try {
+                    String filename = savedPlayerFile.getFileName().toString();
+                    String uuidStr = filename.substring(0, filename.lastIndexOf('.'));
+                    UUID uuid = UUID.fromString(uuidStr);
+                    list.add(uuid);
+                } catch (IllegalArgumentException iae) {
+                    LOGGER.error("Encountered invalid UUID in playerdata directory! ", iae);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
     }
 }

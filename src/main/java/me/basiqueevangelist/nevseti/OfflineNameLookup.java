@@ -26,12 +26,13 @@ public final class OfflineNameLookup {
     }
 
     static void onServerStart(MinecraftServer server) {
-        // FIXME: Make this work without a CompoundTag cache.
-//        for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataLookup.getPlayers().entrySet()) {
-//            if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
-//                names.put(playerData.getKey(), playerData.getValue().getString("SavedUsername"));
-//            }
-//        }
+        for (UUID playerId : OfflineDataLookup.listSavedPlayers()) {
+            NbtCompound tag = OfflineDataLookup.get(playerId);
+
+            if (tag.contains("SavedUsername", NbtType.STRING)) {
+                names.put(playerId, tag.getString("SavedUsername"));
+            }
+        }
     }
 
     public static void setInternal(UUID playerUuid, String name) {
