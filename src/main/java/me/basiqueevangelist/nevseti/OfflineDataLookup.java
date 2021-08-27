@@ -30,8 +30,8 @@ public final class OfflineDataLookup {
             File savedPlayersPath = NeVSeti.currentServer.getSavePath(WorldSavePath.PLAYERDATA).toFile();
             File file = File.createTempFile(player.toString() + "-", ".dat", savedPlayersPath);
             NbtIo.writeCompressed(tag, file);
-            File newDataFile = new File(savedPlayersPath, player.toString() + ".dat");
-            File oldDataFile = new File(savedPlayersPath, player.toString() + ".dat_old");
+            File newDataFile = new File(savedPlayersPath, player + ".dat");
+            File oldDataFile = new File(savedPlayersPath, player + ".dat_old");
             Util.backupAndReplace(newDataFile, file, oldDataFile);
         } catch (IOException e) {
             throw new RuntimeException(e);

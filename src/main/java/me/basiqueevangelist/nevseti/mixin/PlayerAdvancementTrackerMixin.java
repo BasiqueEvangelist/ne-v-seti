@@ -1,6 +1,5 @@
 package me.basiqueevangelist.nevseti.mixin;
 
-import me.basiqueevangelist.nevseti.OfflineAdvancementLookup;
 import me.basiqueevangelist.nevseti.PlayerAdvancementsSaved;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.advancement.PlayerAdvancementTracker;
