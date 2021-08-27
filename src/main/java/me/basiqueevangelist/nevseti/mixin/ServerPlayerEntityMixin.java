@@ -1,7 +1,7 @@
 package me.basiqueevangelist.nevseti.mixin;
 
 import com.mojang.authlib.GameProfile;
-import me.basiqueevangelist.nevseti.OfflineNameCache;
+import me.basiqueevangelist.nevseti.OfflineNameLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
@@ -24,7 +24,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     private void onConstructed(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
         // *Maybe* fix issues with fake player adding mods.
         if (profile.isComplete() && (Class<?>)getClass() == ServerPlayerEntity.class)
-            OfflineNameCache.setInternal(profile.getId(), profile.getName());
+            OfflineNameLookup.setInternal(profile.getId(), profile.getName());
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))

@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public final class OfflineDataCache {
-    private OfflineDataCache() {
+public final class OfflineDataLookup {
+    private OfflineDataLookup() {
 
     }
 

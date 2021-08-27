@@ -28,7 +28,7 @@ public class NeVSetiTest implements ModInitializer {
                     .then(argument("player", GameProfileArgumentType.gameProfile())
                         .executes(context -> {
                             GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
-                            NbtCompoundView view = OfflineDataCache.get(profile.getId());
+                            NbtCompoundView view = OfflineDataLookup.get(profile.getId());
                             context.getSource().sendFeedback(NbtHelper.toPrettyPrintedText(view.copy()), false);
                             return 0;
                         })));
@@ -38,9 +38,9 @@ public class NeVSetiTest implements ModInitializer {
                     .then(argument("player", GameProfileArgumentType.gameProfile())
                         .executes(context -> {
                             GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
-                            String name = OfflineNameCache.getNameFromUUID(profile.getId());
+                            String name = OfflineNameLookup.getNameFromUUID(profile.getId());
                             context.getSource().sendFeedback(new LiteralText("Name: " + name), false);
-                            String uuid = OfflineNameCache.getUUIDFromName(profile.getName()).toString();
+                            String uuid = OfflineNameLookup.getUUIDFromName(profile.getName()).toString();
                             context.getSource().sendFeedback(new LiteralText("UUID: " + uuid), false);
                             return 0;
                         })));
@@ -51,7 +51,7 @@ public class NeVSetiTest implements ModInitializer {
                         .then(argument("player", GameProfileArgumentType.gameProfile())
                             .executes(context -> {
                                 GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
-                                Map<Identifier, AdvancementProgressView> map = OfflineAdvancementCache.get(profile.getId());
+                                Map<Identifier, AdvancementProgressView> map = OfflineAdvancementLookup.get(profile.getId());
                                 System.out.println(map);
                                 return 0;
                             })))

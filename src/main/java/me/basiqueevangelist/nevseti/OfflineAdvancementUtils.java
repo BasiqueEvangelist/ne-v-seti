@@ -34,20 +34,20 @@ public final class OfflineAdvancementUtils {
     }
     
     public static void grant(UUID uuid, Advancement advancement) {
-        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementCache.get(uuid));
+        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementLookup.get(uuid));
         AdvancementProgress progress = getProgress(map, advancement);
         for (String criterion : progress.getUnobtainedCriteria()) {
             progress.obtain(criterion);
         }
-        OfflineAdvancementCache.save(uuid, map);
+        OfflineAdvancementLookup.save(uuid, map);
     }
     
     public static void revoke(UUID uuid, Advancement advancement) {
-        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementCache.get(uuid));
+        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementLookup.get(uuid));
         AdvancementProgress progress = getProgress(map, advancement);
         for (String criterion : progress.getObtainedCriteria()) {
             progress.reset(criterion);
         }
-        OfflineAdvancementCache.save(uuid, map);
+        OfflineAdvancementLookup.save(uuid, map);
     }
 }

@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public final class OfflineAdvancementCache {
-    private OfflineAdvancementCache() {
+public final class OfflineAdvancementLookup {
+    private OfflineAdvancementLookup() {
 
     }
 

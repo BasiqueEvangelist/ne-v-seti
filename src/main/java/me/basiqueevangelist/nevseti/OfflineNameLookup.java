@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public final class OfflineNameCache {
-    private OfflineNameCache() {
+public final class OfflineNameLookup {
+    private OfflineNameLookup() {
 
     }
 
@@ -27,7 +27,7 @@ public final class OfflineNameCache {
     }
 
     static void onServerStart(MinecraftServer server) {
-        for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataCache.getPlayers().entrySet()) {
+        for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataLookup.getPlayers().entrySet()) {
             if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
                 names.put(playerData.getKey(), playerData.getValue().getString("SavedUsername"));
             }
@@ -51,7 +51,7 @@ public final class OfflineNameCache {
         if (names.containsKey(playerUuid))
             return names.get(playerUuid);
 
-        NbtCompoundView offlineData = OfflineDataCache.get(playerUuid);
+        NbtCompoundView offlineData = OfflineDataLookup.get(playerUuid);
         if (offlineData != null && offlineData.contains("SavedUsername", NbtType.STRING)) {
             names.put(playerUuid, offlineData.getString("SavedUsername"));
         }

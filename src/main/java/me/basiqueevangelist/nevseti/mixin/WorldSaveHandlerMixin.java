@@ -1,6 +1,6 @@
 package me.basiqueevangelist.nevseti.mixin;
 
-import me.basiqueevangelist.nevseti.OfflineDataCache;
+import me.basiqueevangelist.nevseti.OfflineDataLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.WorldSaveHandler;
@@ -14,6 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class WorldSaveHandlerMixin {
 	@Inject(method = "savePlayerData", at = @At(value = "INVOKE", target = "Ljava/io/File;createTempFile(Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Ljava/io/File;"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onPlayerDataSaved(PlayerEntity player, CallbackInfo ci, NbtCompound tag) {
-		OfflineDataCache.set(player.getUuid(), tag);
+		OfflineDataLookup.set(player.getUuid(), tag);
 	}
 }
