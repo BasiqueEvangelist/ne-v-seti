@@ -1,33 +1,19 @@
 package me.basiqueevangelist.nevseti;
 
-import com.google.common.collect.ImmutableMap;
-import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
+import me.basiqueevangelist.nevseti.api.OfflineDataLookup;
+import me.basiqueevangelist.nevseti.api.PlayerDataSaved;
 import me.basiqueevangelist.nevseti.nbt.NbtCompoundView;
 import me.basiqueevangelist.nevseti.util.SignallingEvent;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.advancement.AdvancementProgress;
-import net.minecraft.datafixer.DataFixTypes;
-import net.minecraft.datafixer.Schemas;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-import net.minecraft.util.WorldSavePath;
-import net.minecraft.util.crash.CrashException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Deprecated(forRemoval = true)
 public enum OfflineDataCache {

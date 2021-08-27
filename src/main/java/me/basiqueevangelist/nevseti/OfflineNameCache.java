@@ -1,15 +1,8 @@
 package me.basiqueevangelist.nevseti;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
-import com.mojang.authlib.GameProfile;
-import me.basiqueevangelist.nevseti.nbt.NbtCompoundView;
-import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.server.MinecraftServer;
+import me.basiqueevangelist.nevseti.api.OfflineNameLookup;
 
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Deprecated(forRemoval = true)

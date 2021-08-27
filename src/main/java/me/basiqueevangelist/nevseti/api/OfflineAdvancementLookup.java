@@ -1,4 +1,4 @@
-package me.basiqueevangelist.nevseti;
+package me.basiqueevangelist.nevseti.api;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
+import me.basiqueevangelist.nevseti.NeVSeti;
 import me.basiqueevangelist.nevseti.mixin.AdvancementProgressAccessor;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancement.Advancement;
@@ -33,17 +34,7 @@ public final class OfflineAdvancementLookup {
 
     private final static Logger LOGGER = LogManager.getLogger("NeVSeti");
     private static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(AdvancementProgress.class, new AdvancementProgress.Serializer()).registerTypeAdapter(Identifier.class, new Identifier.Serializer()).setPrettyPrinting().create();
-    private static final TypeToken<Map<Identifier, AdvancementProgress>> JSON_TYPE = new TypeToken<Map<Identifier, AdvancementProgress>>() {};
-
-    static void tryInitAdvancementProgress(Identifier advId, AdvancementProgress progress) {
-        if (((AdvancementProgressAccessor) progress).getRequirements().length == 0) {
-            Advancement adv = NeVSeti.currentServer.getAdvancementLoader().get(advId);
-
-            if (adv != null) {
-                ((AdvancementProgressAccessor) progress).setRequirements(adv.getRequirements());
-            }
-        }
-    }
+    private static final TypeToken<Map<Identifier, AdvancementProgress>> JSON_TYPE = new TypeToken<>() { };
 
     public static void save(UUID player, Map<Identifier, AdvancementProgress> map) {
         PlayerAdvancementsSaved.EVENT.invoker().onPlayerAdvancementsSaved(player, map);
@@ -84,7 +75,7 @@ public final class OfflineAdvancementLookup {
                 reader.setLenient(false);
                 dynamic = new Dynamic<>(JsonOps.INSTANCE, Streams.parse(reader));
             }
-            if (!dynamic.get("DataVersion").asNumber().result().isPresent()) {
+            if (dynamic.get("DataVersion").asNumber().result().isEmpty()) {
                 dynamic = dynamic.set("DataVersion", dynamic.createInt(1343));
             }
 
@@ -94,7 +85,7 @@ public final class OfflineAdvancementLookup {
             Map<Identifier, AdvancementProgress> parsedMap = GSON.getAdapter(JSON_TYPE).fromJsonTree(dynamic.getValue());
             ImmutableMap.Builder<Identifier, AdvancementProgress> finalMap = ImmutableMap.builder();
             for (Map.Entry<Identifier, AdvancementProgress> entry : parsedMap.entrySet()) {
-                tryInitAdvancementProgress(entry.getKey(), entry.getValue());
+                NeVSeti.tryInitAdvancementProgress(entry.getKey(), entry.getValue());
                 finalMap.put(entry.getKey(), entry.getValue());
             }
 

@@ -1,12 +1,15 @@
-package me.basiqueevangelist.nevseti;
+package me.basiqueevangelist.nevseti.api;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
+import me.basiqueevangelist.nevseti.NeVSeti;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,12 +20,16 @@ public final class OfflineNameLookup {
     }
 
     private static final BiMap<UUID, String> names = HashBiMap.create();
-    static void register() {
+
+    @ApiStatus.Internal
+    public static void register() {
         PlayerDataSaved.EVENT.register((playerUuid, newTag) -> {
             if (newTag.contains("SavedUsername", NbtType.STRING)) {
                 names.put(playerUuid, newTag.getString("SavedUsername"));
             }
         });
+
+        ServerLifecycleEvents.SERVER_STARTED.register(OfflineNameLookup::onServerStart);
     }
 
     static void onServerStart(MinecraftServer server) {

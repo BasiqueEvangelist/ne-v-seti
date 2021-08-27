@@ -1,6 +1,6 @@
 package me.basiqueevangelist.nevseti.mixin;
 
-import me.basiqueevangelist.nevseti.PlayerAdvancementsSaved;
+import me.basiqueevangelist.nevseti.api.PlayerAdvancementsSaved;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
