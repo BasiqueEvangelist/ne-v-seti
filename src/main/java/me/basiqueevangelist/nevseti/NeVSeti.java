@@ -12,6 +12,7 @@ public class NeVSeti implements ModInitializer {
     public void onInitialize() {
         OfflineNameLookup.register();
         OfflineAdvancementCache.register();
+        OfflineDataCache.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             currentServer = server;

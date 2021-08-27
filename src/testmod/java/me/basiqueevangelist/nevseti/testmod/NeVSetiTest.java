@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import me.basiqueevangelist.nevseti.*;
 import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
+import me.basiqueevangelist.nevseti.nbt.NbtCompoundView;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.advancement.AdvancementProgress;
@@ -71,15 +72,16 @@ public class NeVSetiTest implements ModInitializer {
 
     @SuppressWarnings("removal")
     private void addOldTests(CommandDispatcher<ServerCommandSource> dispatcher) {
-//        dispatcher.register(
-//            literal("shownbt")
-//                .then(argument("player", GameProfileArgumentType.gameProfile())
-//                    .executes(context -> {
-//                        GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
-//                        NbtCompoundView view = OfflineDataCache.INSTANCE.get(profile.getId());
-//                        context.getSource().sendFeedback(NbtHelper.toPrettyPrintedText(view.copy()), false);
-//                        return 0;
-//                    })));
+        dispatcher.register(
+            literal("shownbt")
+                .then(literal("old")
+                    .then(argument("player", GameProfileArgumentType.gameProfile())
+                        .executes(context -> {
+                            GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
+                            NbtCompoundView view = OfflineDataCache.INSTANCE.get(profile.getId());
+                            context.getSource().sendFeedback(NbtHelper.toPrettyPrintedText(view.copy()), false);
+                            return 0;
+                        }))));
 
 //        dispatcher.register(
 //            literal("testnamecache")
