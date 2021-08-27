@@ -18,8 +18,6 @@ public final class OfflineNameCache {
     }
 
     private static final BiMap<UUID, String> names = HashBiMap.create();
-    private static MinecraftServer currentServer;
-
     static void register() {
         OfflineDataChanged.EVENT.register((playerUuid, newTag) -> {
             if (newTag.contains("SavedUsername", NbtType.STRING)) {
@@ -29,17 +27,11 @@ public final class OfflineNameCache {
     }
 
     static void onServerStart(MinecraftServer server) {
-        currentServer = server;
-
         for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataCache.getPlayers().entrySet()) {
             if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
                 names.put(playerData.getKey(), playerData.getValue().getString("SavedUsername"));
             }
         }
-    }
-
-    static void onServerShutdown(MinecraftServer server) {
-        currentServer = null;
     }
 
     public static void setInternal(UUID playerUuid, String name) {
@@ -64,17 +56,17 @@ public final class OfflineNameCache {
             names.put(playerUuid, offlineData.getString("SavedUsername"));
         }
 
-        Optional<GameProfile> loadedProfile = currentServer.getUserCache().getByUuid(playerUuid);
+        Optional<GameProfile> loadedProfile = NeVSeti.currentServer.getUserCache().getByUuid(playerUuid);
         if (loadedProfile.isPresent()) {
             names.put(playerUuid, loadedProfile.get().getName());
             return loadedProfile.get().getName();
         }
 
         GameProfile profile = new GameProfile(playerUuid, null);
-        currentServer.getSessionService().fillProfileProperties(profile, false);
+        NeVSeti.currentServer.getSessionService().fillProfileProperties(profile, false);
         if (profile.isComplete()) {
             names.put(playerUuid, profile.getName());
-            currentServer.getUserCache().add(profile);
+            NeVSeti.currentServer.getUserCache().add(profile);
             return profile.getName();
         }
         return null;
@@ -85,7 +77,7 @@ public final class OfflineNameCache {
             return names.inverse().get(name);
         }
 
-        Optional<GameProfile> loadedProfile = currentServer.getUserCache().findByName(name);
+        Optional<GameProfile> loadedProfile = NeVSeti.currentServer.getUserCache().findByName(name);
         if (loadedProfile.isPresent()) {
             names.put(loadedProfile.get().getId(), name);
             return loadedProfile.get().getId();

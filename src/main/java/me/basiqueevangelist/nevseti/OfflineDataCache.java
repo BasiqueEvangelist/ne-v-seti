@@ -30,10 +30,8 @@ public final class OfflineDataCache {
 
     private final static Logger LOGGER = LogManager.getLogger("NeVSeti");
     private final static Map<UUID, NbtCompoundView> savedPlayers = new HashMap<>();
-    private static MinecraftServer currentServer;
 
     static void onServerStart(MinecraftServer server) {
-        currentServer = server;
         try {
             Path savedPlayersPath = server.getSavePath(WorldSavePath.PLAYERDATA);
             for (Path savedPlayerFile : Files.list(savedPlayersPath).collect(Collectors.toList())) {
@@ -58,7 +56,6 @@ public final class OfflineDataCache {
     }
 
     static void onServerShutdown(MinecraftServer server) {
-        currentServer = null;
         savedPlayers.clear();
     }
 
@@ -78,7 +75,7 @@ public final class OfflineDataCache {
         set(player, tag);
 
         try {
-            File savedPlayersPath = currentServer.getSavePath(WorldSavePath.PLAYERDATA).toFile();
+            File savedPlayersPath = NeVSeti.currentServer.getSavePath(WorldSavePath.PLAYERDATA).toFile();
             File file = File.createTempFile(player.toString() + "-", ".dat", savedPlayersPath);
             NbtIo.writeCompressed(tag, file);
             File newDataFile = new File(savedPlayersPath, player.toString() + ".dat");
@@ -102,7 +99,7 @@ public final class OfflineDataCache {
 
     public static NbtCompoundView reload(UUID player) {
         try {
-            Path savedPlayersPath = currentServer.getSavePath(WorldSavePath.PLAYERDATA);
+            Path savedPlayersPath = NeVSeti.currentServer.getSavePath(WorldSavePath.PLAYERDATA);
             Path savedDataPath = savedPlayersPath.resolve(player.toString() + ".dat");
             NbtCompoundView tag = NbtCompoundView.take(NbtIo.readCompressed(savedDataPath.toFile()));
             savedPlayers.put(player, tag);

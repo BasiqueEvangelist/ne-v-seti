@@ -43,11 +43,8 @@ public final class OfflineAdvancementCache {
     private static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(AdvancementProgress.class, new AdvancementProgress.Serializer()).registerTypeAdapter(Identifier.class, new Identifier.Serializer()).setPrettyPrinting().create();
     private static final TypeToken<Map<Identifier, AdvancementProgress>> JSON_TYPE = new TypeToken<Map<Identifier, AdvancementProgress>>() {};
     private static final Map<UUID, Map<Identifier, AdvancementProgressView>> advancements = new HashMap<>();
-    private static MinecraftServer currentServer;
 
     static void onServerStart(MinecraftServer server) {
-        currentServer = server;
-
         try {
             Path advancementsPath = server.getSavePath(WorldSavePath.ADVANCEMENTS);
 
@@ -92,13 +89,9 @@ public final class OfflineAdvancementCache {
         }
     }
 
-    static void onServerShutdown(MinecraftServer server) {
-        currentServer = null;
-    }
-
     private static void tryInitAdvancementProgress(Identifier advId, AdvancementProgress progress) {
         if (((AdvancementProgressAccessor) progress).getRequirements().length == 0) {
-            Advancement adv = currentServer.getAdvancementLoader().get(advId);
+            Advancement adv = NeVSeti.currentServer.getAdvancementLoader().get(advId);
 
             if (adv != null) {
                 ((AdvancementProgressAccessor) progress).setRequirements(adv.getRequirements());
@@ -129,7 +122,7 @@ public final class OfflineAdvancementCache {
         set(player, map);
 
         try {
-            Path advancementsPath = currentServer.getSavePath(WorldSavePath.ADVANCEMENTS);
+            Path advancementsPath = NeVSeti.currentServer.getSavePath(WorldSavePath.ADVANCEMENTS);
             Path advancementPath = advancementsPath.resolve(player.toString() + ".json");
             JsonElement savedElement = GSON.toJsonTree(map);
             savedElement.getAsJsonObject().addProperty("DataVersion", SharedConstants.getGameVersion().getWorldVersion());
