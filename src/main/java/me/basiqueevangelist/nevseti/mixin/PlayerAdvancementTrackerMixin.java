@@ -20,6 +20,6 @@ public class PlayerAdvancementTrackerMixin {
 
     @Inject(method = "save", at = @At(value = "INVOKE", target = "Lcom/google/gson/Gson;toJsonTree(Ljava/lang/Object;)Lcom/google/gson/JsonElement;"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void onAdvancementsSaved(CallbackInfo ci, Map<Identifier, AdvancementProgress> map) {
-        OfflineAdvancementCache.INSTANCE.set(owner.getUuid(), map);
+        OfflineAdvancementCache.set(owner.getUuid(), map);
     }
 }

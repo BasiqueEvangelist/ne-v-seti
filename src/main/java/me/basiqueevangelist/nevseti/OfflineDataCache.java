@@ -23,14 +23,16 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public enum OfflineDataCache {
-    INSTANCE;
+public final class OfflineDataCache {
+    private OfflineDataCache() {
+
+    }
 
     private final static Logger LOGGER = LogManager.getLogger("NeVSeti");
-    private final Map<UUID, NbtCompoundView> savedPlayers = new HashMap<>();
-    private MinecraftServer currentServer;
+    private final static Map<UUID, NbtCompoundView> savedPlayers = new HashMap<>();
+    private static MinecraftServer currentServer;
 
-    void onServerStart(MinecraftServer server) {
+    static void onServerStart(MinecraftServer server) {
         currentServer = server;
         try {
             Path savedPlayersPath = server.getSavePath(WorldSavePath.PLAYERDATA);
@@ -55,7 +57,7 @@ public enum OfflineDataCache {
         }
     }
 
-    void onServerShutdown(MinecraftServer server) {
+    static void onServerShutdown(MinecraftServer server) {
         currentServer = null;
         savedPlayers.clear();
     }
@@ -63,7 +65,7 @@ public enum OfflineDataCache {
     /**
      * Sets the player data tag in the cache without saving to disk.
      */
-    public void set(UUID player, NbtCompound tag) {
+    public static void set(UUID player, NbtCompound tag) {
         NbtCompoundView view = savedPlayers.put(player, NbtCompoundView.take(tag));
         
         OfflineDataChanged.EVENT.invoker().onOfflineDataChanged(player, view);
@@ -72,7 +74,7 @@ public enum OfflineDataCache {
     /**
      * Sets the player data tag in the cache and saves to disk.
      */
-    public void save(UUID player, NbtCompound tag) {
+    public static void save(UUID player, NbtCompound tag) {
         set(player, tag);
 
         try {
@@ -90,15 +92,15 @@ public enum OfflineDataCache {
     /**
      * Gets an unmodifiable version of the UUID to offline data tag map.
      */
-    public Map<UUID, NbtCompoundView> getPlayers() {
+    public static Map<UUID, NbtCompoundView> getPlayers() {
         return Collections.unmodifiableMap(savedPlayers);
     }
 
-    public NbtCompoundView get(UUID player) {
+    public static NbtCompoundView get(UUID player) {
         return savedPlayers.get(player);
     }
 
-    public NbtCompoundView reload(UUID player) {
+    public static NbtCompoundView reload(UUID player) {
         try {
             Path savedPlayersPath = currentServer.getSavePath(WorldSavePath.PLAYERDATA);
             Path savedDataPath = savedPlayersPath.resolve(player.toString() + ".dat");

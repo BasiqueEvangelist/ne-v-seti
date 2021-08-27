@@ -12,13 +12,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public enum OfflineNameCache {
-    INSTANCE;
+public final class OfflineNameCache {
+    private OfflineNameCache() {
 
-    private final BiMap<UUID, String> names = HashBiMap.create();
-    private MinecraftServer currentServer;
+    }
 
-    OfflineNameCache() {
+    private static final BiMap<UUID, String> names = HashBiMap.create();
+    private static MinecraftServer currentServer;
+
+    static void register() {
         OfflineDataChanged.EVENT.register((playerUuid, newTag) -> {
             if (newTag.contains("SavedUsername", NbtType.STRING)) {
                 names.put(playerUuid, newTag.getString("SavedUsername"));
@@ -26,21 +28,21 @@ public enum OfflineNameCache {
         });
     }
 
-    void onServerStart(MinecraftServer server) {
+    static void onServerStart(MinecraftServer server) {
         currentServer = server;
 
-        for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataCache.INSTANCE.getPlayers().entrySet()) {
+        for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataCache.getPlayers().entrySet()) {
             if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
                 names.put(playerData.getKey(), playerData.getValue().getString("SavedUsername"));
             }
         }
     }
 
-    void onServerShutdown(MinecraftServer server) {
+    static void onServerShutdown(MinecraftServer server) {
         currentServer = null;
     }
 
-    public void setInternal(UUID playerUuid, String name) {
+    public static void setInternal(UUID playerUuid, String name) {
         if (names.containsValue(name))
             names.inverse().remove(name);
         names.put(playerUuid, name);
@@ -49,15 +51,15 @@ public enum OfflineNameCache {
     /**
      *  Gets an unmodifiable version of the UUID &lt;-&gt; username BiMap.
      */
-    public BiMap<UUID, String> getNames() {
+    public static BiMap<UUID, String> getNames() {
         return Maps.unmodifiableBiMap(names);
     }
 
-    public String getNameFromUUID(UUID playerUuid) {
+    public static String getNameFromUUID(UUID playerUuid) {
         if (names.containsKey(playerUuid))
             return names.get(playerUuid);
 
-        NbtCompoundView offlineData = OfflineDataCache.INSTANCE.get(playerUuid);
+        NbtCompoundView offlineData = OfflineDataCache.get(playerUuid);
         if (offlineData != null && offlineData.contains("SavedUsername", NbtType.STRING)) {
             names.put(playerUuid, offlineData.getString("SavedUsername"));
         }
@@ -78,7 +80,7 @@ public enum OfflineNameCache {
         return null;
     }
 
-    public UUID getUUIDFromName(String name) {
+    public static UUID getUUIDFromName(String name) {
         if (names.containsValue(name)) {
             return names.inverse().get(name);
         }

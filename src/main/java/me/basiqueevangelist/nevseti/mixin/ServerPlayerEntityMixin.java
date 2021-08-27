@@ -24,7 +24,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     private void onConstructed(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
         // *Maybe* fix issues with fake player adding mods.
         if (profile.isComplete() && (Class<?>)getClass() == ServerPlayerEntity.class)
-            OfflineNameCache.INSTANCE.setInternal(profile.getId(), profile.getName());
+            OfflineNameCache.setInternal(profile.getId(), profile.getName());
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))

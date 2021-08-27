@@ -34,16 +34,18 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public enum OfflineAdvancementCache {
-    INSTANCE;
+public final class OfflineAdvancementCache {
+    private OfflineAdvancementCache() {
+
+    }
 
     private final static Logger LOGGER = LogManager.getLogger("NeVSeti");
     private static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(AdvancementProgress.class, new AdvancementProgress.Serializer()).registerTypeAdapter(Identifier.class, new Identifier.Serializer()).setPrettyPrinting().create();
     private static final TypeToken<Map<Identifier, AdvancementProgress>> JSON_TYPE = new TypeToken<Map<Identifier, AdvancementProgress>>() {};
-    private final Map<UUID, Map<Identifier, AdvancementProgressView>> advancements = new HashMap<>();
-    private MinecraftServer currentServer;
+    private static final Map<UUID, Map<Identifier, AdvancementProgressView>> advancements = new HashMap<>();
+    private static MinecraftServer currentServer;
 
-    void onServerStart(MinecraftServer server) {
+    static void onServerStart(MinecraftServer server) {
         currentServer = server;
 
         try {
@@ -90,11 +92,11 @@ public enum OfflineAdvancementCache {
         }
     }
 
-    void onServerShutdown(MinecraftServer server) {
+    static void onServerShutdown(MinecraftServer server) {
         currentServer = null;
     }
 
-    private void tryInitAdvancementProgress(Identifier advId, AdvancementProgress progress) {
+    private static void tryInitAdvancementProgress(Identifier advId, AdvancementProgress progress) {
         if (((AdvancementProgressAccessor) progress).getRequirements().length == 0) {
             Advancement adv = currentServer.getAdvancementLoader().get(advId);
 
@@ -107,7 +109,7 @@ public enum OfflineAdvancementCache {
     /**
      * Sets the advancement data in the cache without saving to disk.
      */
-    public Map<Identifier, AdvancementProgressView> set(UUID playerUuid, Map<Identifier, AdvancementProgress> map) {
+    public static Map<Identifier, AdvancementProgressView> set(UUID playerUuid, Map<Identifier, AdvancementProgress> map) {
         ImmutableMap.Builder<Identifier, AdvancementProgressView> finalMapBuilder = ImmutableMap.builder();
         for (Map.Entry<Identifier, AdvancementProgress> entry : map.entrySet()) {
             tryInitAdvancementProgress(entry.getKey(), entry.getValue());
@@ -123,7 +125,7 @@ public enum OfflineAdvancementCache {
     /**
      * Sets the player data tag in the cache and saves to disk.
      */
-    public void save(UUID player, Map<Identifier, AdvancementProgress> map) {
+    public static void save(UUID player, Map<Identifier, AdvancementProgress> map) {
         set(player, map);
 
         try {
@@ -147,11 +149,11 @@ public enum OfflineAdvancementCache {
      * Returns an <b>unmodifiable</b> version of the advancement to progress map.
      * @see OfflineAdvancementUtils#copyAdvancementMap
      */
-    public Map<Identifier, AdvancementProgressView> get(UUID player) {
+    public static Map<Identifier, AdvancementProgressView> get(UUID player) {
         return advancements.get(player);
     }
 
-    public Map<UUID, Map<Identifier, AdvancementProgressView>> getAdvancementData() {
+    public static Map<UUID, Map<Identifier, AdvancementProgressView>> getAdvancementData() {
         return Collections.unmodifiableMap(advancements);
     }
 }
