@@ -4,11 +4,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
-import me.basiqueevangelist.nevseti.nbt.NbtCompoundView;
 import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ public final class OfflineNameLookup {
 
     private static final BiMap<UUID, String> names = HashBiMap.create();
     static void register() {
-        OfflineDataChanged.EVENT.register((playerUuid, newTag) -> {
+        PlayerDataSaved.EVENT.register((playerUuid, newTag) -> {
             if (newTag.contains("SavedUsername", NbtType.STRING)) {
                 names.put(playerUuid, newTag.getString("SavedUsername"));
             }
@@ -27,11 +26,12 @@ public final class OfflineNameLookup {
     }
 
     static void onServerStart(MinecraftServer server) {
-        for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataLookup.getPlayers().entrySet()) {
-            if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
-                names.put(playerData.getKey(), playerData.getValue().getString("SavedUsername"));
-            }
-        }
+        // FIXME: Make this work without a CompoundTag cache.
+//        for (Map.Entry<UUID, NbtCompoundView> playerData : OfflineDataLookup.getPlayers().entrySet()) {
+//            if (playerData.getValue().contains("SavedUsername", NbtType.STRING)) {
+//                names.put(playerData.getKey(), playerData.getValue().getString("SavedUsername"));
+//            }
+//        }
     }
 
     public static void setInternal(UUID playerUuid, String name) {
@@ -51,7 +51,7 @@ public final class OfflineNameLookup {
         if (names.containsKey(playerUuid))
             return names.get(playerUuid);
 
-        NbtCompoundView offlineData = OfflineDataLookup.get(playerUuid);
+        NbtCompound offlineData = OfflineDataLookup.get(playerUuid);
         if (offlineData != null && offlineData.contains("SavedUsername", NbtType.STRING)) {
             names.put(playerUuid, offlineData.getString("SavedUsername"));
         }

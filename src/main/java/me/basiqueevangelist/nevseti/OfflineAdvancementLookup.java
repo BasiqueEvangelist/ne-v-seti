@@ -38,9 +38,6 @@ public final class OfflineAdvancementLookup {
     private static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(AdvancementProgress.class, new AdvancementProgress.Serializer()).registerTypeAdapter(Identifier.class, new Identifier.Serializer()).setPrettyPrinting().create();
     private static final TypeToken<Map<Identifier, AdvancementProgress>> JSON_TYPE = new TypeToken<Map<Identifier, AdvancementProgress>>() {};
 
-    static void onServerStart(MinecraftServer server) {
-    }
-
     private static void tryInitAdvancementProgress(Identifier advId, AdvancementProgress progress) {
         if (((AdvancementProgressAccessor) progress).getRequirements().length == 0) {
             Advancement adv = NeVSeti.currentServer.getAdvancementLoader().get(advId);

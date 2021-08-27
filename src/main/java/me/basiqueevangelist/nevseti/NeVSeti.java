@@ -14,15 +14,10 @@ public class NeVSeti implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             currentServer = server;
 
-            OfflineDataLookup.onServerStart(server);
             OfflineNameLookup.onServerStart(server);
-            OfflineAdvancementLookup.onServerStart(server);
-
-            OfflineDataLoaded.EVENT.invoker().onOfflineDataLoaded();
         });
 
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
-            OfflineDataLookup.onServerShutdown(server);
 
             currentServer = null;
         });
