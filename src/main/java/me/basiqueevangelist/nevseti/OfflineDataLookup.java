@@ -1,6 +1,9 @@
 package me.basiqueevangelist.nevseti;
 
+import net.minecraft.datafixer.DataFixTypes;
+import net.minecraft.datafixer.Schemas;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.util.Util;
 import net.minecraft.util.WorldSavePath;
@@ -42,7 +45,9 @@ public final class OfflineDataLookup {
         try {
             Path savedPlayersPath = NeVSeti.currentServer.getSavePath(WorldSavePath.PLAYERDATA);
             Path savedDataPath = savedPlayersPath.resolve(player.toString() + ".dat");
-            return NbtIo.readCompressed(savedDataPath.toFile());
+            NbtCompound rawTag = NbtIo.readCompressed(savedDataPath.toFile());
+            int dataVersion = rawTag.contains("DataVersion", 3) ? rawTag.getInt("DataVersion") : -1;
+            return NbtHelper.update(Schemas.getFixer(), DataFixTypes.PLAYER, rawTag, dataVersion);
         } catch (IOException e) {
             LOGGER.error("Couldn't get player data for offline player {}", player, e);
             throw new RuntimeException(e);
