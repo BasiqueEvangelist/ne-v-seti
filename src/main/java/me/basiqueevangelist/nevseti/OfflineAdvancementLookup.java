@@ -5,13 +5,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
-import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
 import me.basiqueevangelist.nevseti.mixin.AdvancementProgressAccessor;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancement.Advancement;
@@ -21,15 +19,12 @@ import net.minecraft.datafixer.Schemas;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
-import net.minecraft.util.crash.CrashException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,51 +37,8 @@ public final class OfflineAdvancementLookup {
     private final static Logger LOGGER = LogManager.getLogger("NeVSeti");
     private static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(AdvancementProgress.class, new AdvancementProgress.Serializer()).registerTypeAdapter(Identifier.class, new Identifier.Serializer()).setPrettyPrinting().create();
     private static final TypeToken<Map<Identifier, AdvancementProgress>> JSON_TYPE = new TypeToken<Map<Identifier, AdvancementProgress>>() {};
-    private static final Map<UUID, Map<Identifier, AdvancementProgressView>> advancements = new HashMap<>();
 
     static void onServerStart(MinecraftServer server) {
-        try {
-            Path advancementsPath = server.getSavePath(WorldSavePath.ADVANCEMENTS);
-
-            if (Files.exists(advancementsPath)) {
-                for (Path advancementFile : Files.list(advancementsPath).collect(Collectors.toList())) {
-                    if (Files.isDirectory(advancementFile) || !advancementFile.toString().endsWith(".json")) {
-                        continue;
-                    }
-
-                    try {
-                        String filename = advancementFile.getFileName().toString();
-                        String uuidStr = filename.substring(0, filename.lastIndexOf('.'));
-                        UUID uuid = UUID.fromString(uuidStr);
-                        Dynamic<JsonElement> dynamic;
-                        try (InputStream s = Files.newInputStream(advancementFile);
-                             InputStreamReader streamReader = new InputStreamReader(s);
-                             JsonReader reader = new JsonReader(streamReader)) {
-                            reader.setLenient(false);
-                            dynamic = new Dynamic<>(JsonOps.INSTANCE, Streams.parse(reader));
-                        }
-                        if (!dynamic.get("DataVersion").asNumber().result().isPresent()) {
-                            dynamic = dynamic.set("DataVersion", dynamic.createInt(1343));
-                        }
-
-                        dynamic = Schemas.getFixer().update(DataFixTypes.ADVANCEMENTS.getTypeReference(), dynamic, dynamic.get("DataVersion").asInt(0), SharedConstants.getGameVersion().getWorldVersion());
-                        dynamic = dynamic.remove("DataVersion");
-
-                        Map<Identifier, AdvancementProgress> parsedMap = GSON.getAdapter(JSON_TYPE).fromJsonTree(dynamic.getValue());
-                        ImmutableMap.Builder<Identifier, AdvancementProgressView> finalMap = ImmutableMap.builder();
-                        for (Map.Entry<Identifier, AdvancementProgress> entry : parsedMap.entrySet()) {
-                            tryInitAdvancementProgress(entry.getKey(), entry.getValue());
-                            finalMap.put(entry.getKey(), AdvancementProgressView.take(entry.getValue()));
-                        }
-                        advancements.put(uuid, finalMap.build());
-                    } catch (CrashException | IOException | IllegalArgumentException | JsonSyntaxException e) {
-                        LOGGER.error("Error while reading advancement file {}: {}", advancementFile, e);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static void tryInitAdvancementProgress(Identifier advId, AdvancementProgress progress) {
@@ -99,27 +51,8 @@ public final class OfflineAdvancementLookup {
         }
     }
 
-    /**
-     * Sets the advancement data in the cache without saving to disk.
-     */
-    public static Map<Identifier, AdvancementProgressView> set(UUID playerUuid, Map<Identifier, AdvancementProgress> map) {
-        ImmutableMap.Builder<Identifier, AdvancementProgressView> finalMapBuilder = ImmutableMap.builder();
-        for (Map.Entry<Identifier, AdvancementProgress> entry : map.entrySet()) {
-            tryInitAdvancementProgress(entry.getKey(), entry.getValue());
-            finalMapBuilder.put(entry.getKey(), AdvancementProgressView.take(entry.getValue()));
-        }
-        Map<Identifier, AdvancementProgressView> finalMap = advancements.put(playerUuid, finalMapBuilder.build());
-
-        OfflineAdvancementsChanged.EVENT.invoker().onOfflineAdvancementsChanged(playerUuid, finalMap);
-
-        return finalMap;
-    }
-
-    /**
-     * Sets the player data tag in the cache and saves to disk.
-     */
     public static void save(UUID player, Map<Identifier, AdvancementProgress> map) {
-        set(player, map);
+        PlayerAdvancementsSaved.EVENT.invoker().onPlayerAdvancementsSaved(player, map);
 
         try {
             Path advancementsPath = NeVSeti.currentServer.getSavePath(WorldSavePath.ADVANCEMENTS);
@@ -138,15 +71,43 @@ public final class OfflineAdvancementLookup {
         }
     }
 
-    /**
-     * Returns an <b>unmodifiable</b> version of the advancement to progress map.
-     * @see OfflineAdvancementUtils#copyAdvancementMap
-     */
-    public static Map<Identifier, AdvancementProgressView> get(UUID player) {
-        return advancements.get(player);
-    }
+    public static Map<Identifier, AdvancementProgress> get(UUID player) {
+        try {
+            Path advancementsPath = NeVSeti.currentServer.getSavePath(WorldSavePath.ADVANCEMENTS);
 
-    public static Map<UUID, Map<Identifier, AdvancementProgressView>> getAdvancementData() {
-        return Collections.unmodifiableMap(advancements);
+            if (!Files.exists(advancementsPath))
+                return null;
+
+            Path advancementFile = advancementsPath.resolve(player + ".json");
+
+            if (!Files.exists(advancementFile))
+                return null;
+
+            Dynamic<JsonElement> dynamic;
+            try (InputStream s = Files.newInputStream(advancementFile);
+                 InputStreamReader streamReader = new InputStreamReader(s);
+                 JsonReader reader = new JsonReader(streamReader)) {
+                reader.setLenient(false);
+                dynamic = new Dynamic<>(JsonOps.INSTANCE, Streams.parse(reader));
+            }
+            if (!dynamic.get("DataVersion").asNumber().result().isPresent()) {
+                dynamic = dynamic.set("DataVersion", dynamic.createInt(1343));
+            }
+
+            dynamic = Schemas.getFixer().update(DataFixTypes.ADVANCEMENTS.getTypeReference(), dynamic, dynamic.get("DataVersion").asInt(0), SharedConstants.getGameVersion().getWorldVersion());
+            dynamic = dynamic.remove("DataVersion");
+
+            Map<Identifier, AdvancementProgress> parsedMap = GSON.getAdapter(JSON_TYPE).fromJsonTree(dynamic.getValue());
+            ImmutableMap.Builder<Identifier, AdvancementProgress> finalMap = ImmutableMap.builder();
+            for (Map.Entry<Identifier, AdvancementProgress> entry : parsedMap.entrySet()) {
+                tryInitAdvancementProgress(entry.getKey(), entry.getValue());
+                finalMap.put(entry.getKey(), entry.getValue());
+            }
+
+            return finalMap.build();
+        } catch (IOException e) {
+            LOGGER.error("Couldn't get advancements for offline player {}", player, e);
+            throw new RuntimeException(e);
+        }
     }
 }

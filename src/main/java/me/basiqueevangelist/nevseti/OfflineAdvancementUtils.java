@@ -1,11 +1,9 @@
 package me.basiqueevangelist.nevseti;
 
-import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,18 +12,7 @@ public final class OfflineAdvancementUtils {
 
     }
 
-    /**
-     * Creates a modifiable version of an advancement map.
-     */
-    public static Map<Identifier, AdvancementProgress> copyAdvancementMap(Map<Identifier, AdvancementProgressView> from) {
-        Map<Identifier, AdvancementProgress> newMap = new HashMap<>();
-        for (Map.Entry<Identifier, AdvancementProgressView> entry : from.entrySet()) {
-            newMap.put(entry.getKey(), entry.getValue().copy());
-        }
-        return newMap;
-    }
-
-    public static AdvancementProgress getProgress(Map<Identifier, AdvancementProgress> map, Advancement advancement) {
+    public static AdvancementProgress getOrAddProgress(Map<Identifier, AdvancementProgress> map, Advancement advancement) {
         return map.computeIfAbsent(advancement.getId(), id -> {
             AdvancementProgress progress = new AdvancementProgress();
             progress.init(advancement.getCriteria(), advancement.getRequirements());
@@ -34,8 +21,8 @@ public final class OfflineAdvancementUtils {
     }
     
     public static void grant(UUID uuid, Advancement advancement) {
-        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementLookup.get(uuid));
-        AdvancementProgress progress = getProgress(map, advancement);
+        Map<Identifier, AdvancementProgress> map = OfflineAdvancementLookup.get(uuid);
+        AdvancementProgress progress = getOrAddProgress(map, advancement);
         for (String criterion : progress.getUnobtainedCriteria()) {
             progress.obtain(criterion);
         }
@@ -43,8 +30,8 @@ public final class OfflineAdvancementUtils {
     }
     
     public static void revoke(UUID uuid, Advancement advancement) {
-        Map<Identifier, AdvancementProgress> map = copyAdvancementMap(OfflineAdvancementLookup.get(uuid));
-        AdvancementProgress progress = getProgress(map, advancement);
+        Map<Identifier, AdvancementProgress> map = OfflineAdvancementLookup.get(uuid);
+        AdvancementProgress progress = getOrAddProgress(map, advancement);
         for (String criterion : progress.getObtainedCriteria()) {
             progress.reset(criterion);
         }

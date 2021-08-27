@@ -1,6 +1,7 @@
 package me.basiqueevangelist.nevseti.mixin;
 
 import me.basiqueevangelist.nevseti.OfflineAdvancementLookup;
+import me.basiqueevangelist.nevseti.PlayerAdvancementsSaved;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,6 +21,6 @@ public class PlayerAdvancementTrackerMixin {
 
     @Inject(method = "save", at = @At(value = "INVOKE", target = "Lcom/google/gson/Gson;toJsonTree(Ljava/lang/Object;)Lcom/google/gson/JsonElement;"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void onAdvancementsSaved(CallbackInfo ci, Map<Identifier, AdvancementProgress> map) {
-        OfflineAdvancementLookup.set(owner.getUuid(), map);
+        PlayerAdvancementsSaved.EVENT.invoker().onPlayerAdvancementsSaved(owner.getUuid(), map);
     }
 }
