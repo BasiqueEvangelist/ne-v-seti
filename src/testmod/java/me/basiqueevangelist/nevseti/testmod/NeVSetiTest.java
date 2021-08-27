@@ -83,17 +83,18 @@ public class NeVSetiTest implements ModInitializer {
                             return 0;
                         }))));
 
-//        dispatcher.register(
-//            literal("testnamecache")
-//                .then(argument("player", GameProfileArgumentType.gameProfile())
-//                    .executes(context -> {
-//                        GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
-//                        String name = OfflineNameCache.INSTANCE.getNameFromUUID(profile.getId());
-//                        context.getSource().sendFeedback(new LiteralText("Name: " + name), false);
-//                        String uuid = OfflineNameCache.INSTANCE.getUUIDFromName(profile.getName()).toString();
-//                        context.getSource().sendFeedback(new LiteralText("UUID: " + uuid), false);
-//                        return 0;
-//                    })));
+        dispatcher.register(
+            literal("testnamecache")
+                .then(literal("old")
+                    .then(argument("player", GameProfileArgumentType.gameProfile())
+                        .executes(context -> {
+                            GameProfile profile = GameProfileArgumentType.getProfileArgument(context, "player").iterator().next();
+                            String name = OfflineNameCache.INSTANCE.getNameFromUUID(profile.getId());
+                            context.getSource().sendFeedback(new LiteralText("Name: " + name), false);
+                            String uuid = OfflineNameCache.INSTANCE.getUUIDFromName(profile.getName()).toString();
+                            context.getSource().sendFeedback(new LiteralText("UUID: " + uuid), false);
+                            return 0;
+                        }))));
 
         dispatcher.register(
             literal("testadvancementcache")
