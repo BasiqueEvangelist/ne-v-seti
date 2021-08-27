@@ -34,6 +34,8 @@ public final class OfflineAdvancementUtils {
     
     public static void grant(UUID uuid, Advancement advancement) {
         Map<Identifier, AdvancementProgress> map = OfflineAdvancementLookup.get(uuid);
+        if (map == null)
+            map = new HashMap<>();
         AdvancementProgress progress = getOrAddProgress(map, advancement);
         for (String criterion : progress.getUnobtainedCriteria()) {
             progress.obtain(criterion);
@@ -43,6 +45,8 @@ public final class OfflineAdvancementUtils {
     
     public static void revoke(UUID uuid, Advancement advancement) {
         Map<Identifier, AdvancementProgress> map = OfflineAdvancementLookup.get(uuid);
+        if (map == null)
+            map = new HashMap<>();
         AdvancementProgress progress = getOrAddProgress(map, advancement);
         for (String criterion : progress.getObtainedCriteria()) {
             progress.reset(criterion);
