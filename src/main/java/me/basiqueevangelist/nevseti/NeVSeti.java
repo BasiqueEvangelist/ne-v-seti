@@ -20,9 +20,11 @@ public class NeVSeti implements ModInitializer {
         OfflineAdvancementCache.register();
         OfflineDataCache.register();
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             currentServer = server;
+        });
 
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             OfflineDataLoaded.EVENT.invoker().onOfflineDataLoaded();
         });
 
