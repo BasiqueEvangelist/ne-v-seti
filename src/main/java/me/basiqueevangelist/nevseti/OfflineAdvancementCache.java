@@ -2,8 +2,8 @@ package me.basiqueevangelist.nevseti;
 
 import com.google.common.collect.ImmutableMap;
 import me.basiqueevangelist.nevseti.advancements.AdvancementProgressView;
-import me.basiqueevangelist.nevseti.api.OfflineAdvancementLookup;
-import me.basiqueevangelist.nevseti.api.PlayerAdvancementsSaved;
+import me.basiqueevangelist.nevseti.api.v2.OfflineAdvancementLookup;
+import me.basiqueevangelist.nevseti.api.v2.PlayerAdvancementsSaved;
 import me.basiqueevangelist.nevseti.util.SignallingEvent;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.advancement.AdvancementProgress;

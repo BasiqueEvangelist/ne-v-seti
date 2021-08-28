@@ -1,7 +1,7 @@
 package me.basiqueevangelist.nevseti;
 
 import com.google.common.collect.BiMap;
-import me.basiqueevangelist.nevseti.api.OfflineNameLookup;
+import me.basiqueevangelist.nevseti.api.v2.OfflineNameLookup;
 
 import java.util.UUID;
 

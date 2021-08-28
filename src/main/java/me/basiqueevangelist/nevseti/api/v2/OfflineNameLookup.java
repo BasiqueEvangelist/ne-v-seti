@@ -1,4 +1,4 @@
-package me.basiqueevangelist.nevseti.api;
+package me.basiqueevangelist.nevseti.api.v2;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

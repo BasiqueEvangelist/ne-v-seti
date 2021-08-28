@@ -1,7 +1,7 @@
 package me.basiqueevangelist.nevseti;
 
-import me.basiqueevangelist.nevseti.api.OfflineDataLookup;
-import me.basiqueevangelist.nevseti.api.PlayerDataSaved;
+import me.basiqueevangelist.nevseti.api.v2.OfflineDataLookup;
+import me.basiqueevangelist.nevseti.api.v2.PlayerDataSaved;
 import me.basiqueevangelist.nevseti.nbt.NbtCompoundView;
 import me.basiqueevangelist.nevseti.util.SignallingEvent;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;

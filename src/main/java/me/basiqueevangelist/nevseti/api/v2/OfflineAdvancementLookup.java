@@ -1,4 +1,4 @@
-package me.basiqueevangelist.nevseti.api;
+package me.basiqueevangelist.nevseti.api.v2;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
@@ -11,9 +11,7 @@ import com.google.gson.stream.JsonReader;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import me.basiqueevangelist.nevseti.NeVSeti;
-import me.basiqueevangelist.nevseti.mixin.AdvancementProgressAccessor;
 import net.minecraft.SharedConstants;
-import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.datafixer.Schemas;

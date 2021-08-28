@@ -25,14 +25,14 @@ public final class OfflineAdvancementUtils {
     }
 
     public static AdvancementProgress getOrAddProgress(Map<Identifier, AdvancementProgress> map, Advancement advancement) {
-        return me.basiqueevangelist.nevseti.api.OfflineAdvancementUtils.getOrAddProgress(map, advancement);
+        return me.basiqueevangelist.nevseti.api.v2.OfflineAdvancementUtils.getOrAddProgress(map, advancement);
     }
     
     public static void grant(UUID uuid, Advancement advancement) {
-        me.basiqueevangelist.nevseti.api.OfflineAdvancementUtils.grant(uuid, advancement);
+        me.basiqueevangelist.nevseti.api.v2.OfflineAdvancementUtils.grant(uuid, advancement);
     }
     
     public static void revoke(UUID uuid, Advancement advancement) {
-        me.basiqueevangelist.nevseti.api.OfflineAdvancementUtils.revoke(uuid, advancement);
+        me.basiqueevangelist.nevseti.api.v2.OfflineAdvancementUtils.revoke(uuid, advancement);
     }
 }

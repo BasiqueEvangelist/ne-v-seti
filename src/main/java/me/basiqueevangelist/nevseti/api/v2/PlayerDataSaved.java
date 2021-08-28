@@ -1,4 +1,4 @@
-package me.basiqueevangelist.nevseti.api;
+package me.basiqueevangelist.nevseti.api.v2;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

@@ -1,4 +1,4 @@
-package me.basiqueevangelist.nevseti.api;
+package me.basiqueevangelist.nevseti.api.v2;
 
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementProgress;

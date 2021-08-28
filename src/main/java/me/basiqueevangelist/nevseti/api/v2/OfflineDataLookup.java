@@ -1,4 +1,4 @@
-package me.basiqueevangelist.nevseti.api;
+package me.basiqueevangelist.nevseti.api.v2;
 
 import me.basiqueevangelist.nevseti.NeVSeti;
 import net.minecraft.datafixer.DataFixTypes;

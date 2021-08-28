@@ -1,6 +1,6 @@
 package me.basiqueevangelist.nevseti.mixin;
 
-import me.basiqueevangelist.nevseti.api.PlayerDataSaved;
+import me.basiqueevangelist.nevseti.api.v2.PlayerDataSaved;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.WorldSaveHandler;

@@ -1,6 +1,6 @@
 package me.basiqueevangelist.nevseti;
 
-import me.basiqueevangelist.nevseti.api.OfflineNameLookup;
+import me.basiqueevangelist.nevseti.api.v2.OfflineNameLookup;
 import me.basiqueevangelist.nevseti.mixin.AdvancementProgressAccessor;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;

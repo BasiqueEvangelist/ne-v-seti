@@ -1,7 +1,7 @@
 package me.basiqueevangelist.nevseti.mixin;
 
 import com.mojang.authlib.GameProfile;
-import me.basiqueevangelist.nevseti.api.OfflineNameLookup;
+import me.basiqueevangelist.nevseti.api.v2.OfflineNameLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
